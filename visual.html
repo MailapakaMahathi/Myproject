@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Formation and Leadership Saga of Bharat States</title>
+    <link rel="stylesheet" href="visual.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI-Powered Formation Saga of Bharat States</h1>
+            <p>Enhanced with Real-time Data, AI Insights & Visual Intelligence</p>
+            
+            <div class="ai-features">
+                <button class="ai-btn" onclick="toggleAIMode('insights')">🤖 AI Insights</button>
+                <button class="ai-btn" onclick="toggleAIMode('images')">📸 Smart Images</button>
+                <button class="ai-btn" onclick="toggleAIMode('news')">📰 Related News</button>
+                <button class="ai-btn" onclick="toggleAIMode('maps')">🗺️ Historical Maps</button>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="Search states, leaders, movements..." 
+                       oninput="searchTimeline(this.value)">
+            </div>
+        </div>
+
+        <div class="timeline-container">
+            <div class="category-legend">
+                <div class="legend-item" onclick="filterCategory('all')">
+                    <div class="legend-dot" style="background: linear-gradient(45deg, #ff6b6b, #96ceb4);"></div>
+                    All Categories
+                </div>
+                <div class="legend-item" onclick="filterCategory('linguistic')">
+                    <div class="legend-dot linguistic-dot"></div>
+                    Linguistic Movements
+                </div>
+                <div class="legend-item" onclick="filterCategory('tribal')">
+                    <div class="legend-dot tribal-dot"></div>
+                    Tribal Aspirations
+                </div>
+                <div class="legend-item" onclick="filterCategory('political')">
+                    <div class="legend-dot political-dot"></div>
+                    Political Reorganization
+                </div>
+                <div class="legend-item" onclick="filterCategory('economic')">
+                    <div class="legend-dot economic-dot"></div>
+                    Economic Factors
+                </div>
+            </div>
+
+            <div class="timeline" id="timeline">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading enhanced timeline with AI features...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for expanded content -->
+    <div id="contentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script src="visualscript.js"></script>
+</body>
+</html>

@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharat States AR Explorer - Advanced</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.4.0/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ar.js/2.2.2/aframe-ar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+            color: #333;
+        }
+
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .splash-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .splash-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+
+        .feature-badges {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .start-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Main Interface */
+        .main-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            display: none;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 15px 20px;
+            z-index: 1100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.05);
+        }
+
+        /* Enhanced State Selector */
+        .state-selector {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            z-index: 1050;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .filter-tab {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .state-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .state-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .state-card:hover::before {
+            opacity: 1;
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .state-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .state-info {
+            font-size: 11px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        /* Enhanced Info Panel */
+        .info-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            z-index: 1200;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
+            max-height: 80vh;
+            overflow: hidden;
+        }
+
+        .info-panel.show {
+            transform: translateY(0);
+        }
+
+        .info-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .info-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-content {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(80vh - 80px);
+        }
+
+        .content-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-content {
+            color: #666;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff9a56, #ff6b9d);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(255, 154, 86, 0.3);
+        }
+
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .loading-text {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .loading-tips {
+            font-size: 12px;
+            opacity: 0.7;
+            text-align: center;
+            max-width: 200px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-1px);
+        }
+
+        .close-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        /* AR Scene */
+        .ar-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 500;
+        }
+
+        /* Floating Elements */
+        .floating-info {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            text-align: center;
+            z-index: 1300;
+            display: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
+            }
+            
+            .state-card {
+                padding: 15px;
+            }
+            
+            .info-panel {
+                max-height: 85vh;
+            }
+            
+            .splash-title {
+                font-size: 24px;
+            }
+            
+            .start-btn {
+                padding: 16px 35px;
+                font-size: 16px;
+            }
+        }
+
+        /* Utility Classes */
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        .slide-up { animation: slideUp 0.4s ease-out; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a67d8;
+        }
+        /* Image Gallery Styles */
+.image-gallery {
+    margin: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.image-credit {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-item:hover .image-credit {
+    opacity: 1;
+}
+
+.image-credit a {
+    color: white;
+    text-decoration: underline;
+}
+
+.image-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="splash-screen">
+        <div class="splash-logo">🇮🇳</div>
+        <h1 class="splash-title">Bharat States Explorer</h1>
+      <p class="splash-subtitle">Explore the Formation History & Leadership Saga of Indian States through Advanced AR</p>
+        
+        <div class="feature-badges">
+            <span class="badge">🎯 28 States</span>
+            <span class="badge">🤖 AI Powered</span>
+            <span class="badge">📱 AR Ready</span>
+            <span class="badge">🏛️ Historical</span>
+        </div>
+        
+        <button class="start-btn" onclick="initializeApp()">
+            <span>Begin Exploration</span>
+        </button>
+    </div>
+
+    <!-- Main Interface -->
+    <div id="mainInterface" class="main-interface">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <span>🗺️</span>
+                <span>Bharat Explorer</span>
+            </div>
+            <div class="header-controls">
+                <button class="control-btn" onclick="toggleAR()">📷 AR Mode</button>
+                <button class="control-btn" onclick="showSettings()">⚙️</button>
+            </div>
+        </div>
+
+        <!-- State Selector -->
+        <div id="stateSelector" class="state-selector">
+            <input type="text" class="search-bar" placeholder="🔍 Search states..." onkeyup="filterStates(this.value)">
+            
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterByRegion('all')">All States</button>
+                <button class="filter-tab" onclick="filterByRegion('north')">North</button>
+                <button class="filter-tab" onclick="filterByRegion('south')">South</button>
+                <button class="filter-tab" onclick="filterByRegion('east')">East</button>
+                <button class="filter-tab" onclick="filterByRegion('west')">West</button>
+                <button class="filter-tab" onclick="filterByRegion('central')">Central</button>
+                <button class="filter-tab" onclick="filterByRegion('northeast')">Northeast</button>
+            </div>
+            
+            <div id="statesGrid" class="states-grid"></div>
+        </div>
+
+        <!-- Enhanced Info Panel -->
+        <div id="infoPanel" class="info-panel">
+            <div class="info-header">
+                <div class="info-title">
+                    <span id="stateEmoji">🏛️</span>
+                    <span id="stateTitle">State Information</span>
+                </div>
+                <button class="close-btn" onclick="closeInfoPanel()">✕</button>
+            </div>
+            
+            <div id="infoContent" class="info-content">
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Generating insights...</div>
+                    <div class="loading-tips">Fetching historical data and leadership stories</div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn" onclick="shareState()">
+                    <span>📤</span>
+                    <span>Share</span>
+                </button>
+                <button class="action-btn" onclick="bookmarkState()">
+                    <span>🔖</span>
+                    <span>Bookmark</span>
+                </button>
+                <button class="action-btn" onclick="exploreMore()">
+                    <span>🔄</span>
+                    <span>More Info</span>
+                </button>
+                <button class="action-btn" onclick="viewInAR()">
+                    <span>🥽</span>
+                    <span>AR View</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AR Scene -->
+    <a-scene id="arScene" class="ar-scene hidden" embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false;">
+        <a-assets>
+            <a-mixin id="state-marker" geometry="primitive: box; width: 0.5; height: 0.8; depth: 0.1" 
+                     material="color: #667eea; opacity: 0.8" 
+                     animation="property: rotation; to: 0 360 0; loop: true; dur: 10000"></a-mixin>
+        </a-assets>
+        
+        <a-marker preset="hiro">
+            <a-entity mixin="state-marker" position="0 0.5 0"></a-entity>
+            <a-text value="Tap to explore!" position="0 1.2 0" align="center" color="#333" scale="2 2 2"></a-text>
+        </a-marker>
+        
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <!-- Floating Info (for AR mode) -->
+    <div id="floatingInfo" class="floating-info">
+        <h3>AR Mode Active</h3>
+        <p>Point your camera at any surface and tap to place state information markers.</p>
+        <button class="control-btn" onclick="exitAR()">Exit AR</button>
+    </div>
+
+    <script>
+        // Enhanced Configuration
+        const CONFIG = {
+            groq: {
+                apiKey: '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',
+                model: 'llama3-70b-8192',
+                apiUrl: 'https://api.groq.com/openai/v1/chat/completions'
+            },
+            app: {
+                version: '2.0.0',
+                maxRequestsPerMinute: 10,
+                cacheTimeout: 300000 // 5 minutes
+            },
+             unsplash: {
+        apiKey: 'p4zjGKvu_vbc6pNr00pdMYKKgRibfz68MoMTjp5nKUQ',
+        apiUrl: 'https://api.unsplash.com',
+        cacheTimeout: 3600000 // 1 hour cache for images
+    },
+    imageCache: new Map()
+        };
+
+        // Enhanced States Data with Regional Classification
+        const statesData = {
+            'Andhra Pradesh': { region: 'south', capital: 'Amaravati', emoji: '🏛️' },
+            'Arunachal Pradesh': { region: 'northeast', capital: 'Itanagar', emoji: '🏔️' },
+            'Assam': { region: 'northeast', capital: 'Dispur', emoji: '🦏' },
+            'Bihar': { region: 'east', capital: 'Patna', emoji: '🏺' },
+            'Chhattisgarh': { region: 'central', capital: 'Raipur', emoji: '🌾' },
+            'Goa': { region: 'west', capital: 'Panaji', emoji: '🏖️' },
+            'Gujarat': { region: 'west', capital: 'Gandhinagar', emoji: '🦚' },
+            'Haryana': { region: 'north', capital: 'Chandigarh', emoji: '🌾' },
+            'Himachal Pradesh': { region: 'north', capital: 'Shimla', emoji: '⛰️' },
+            'Jharkhand': { region: 'east', capital: 'Ranchi', emoji: '⛏️' },
+            'Karnataka': { region: 'south', capital: 'Bengaluru', emoji: '💻' },
+            'Kerala': { region: 'south', capital: 'Thiruvananthapuram', emoji: '🥥' },
+            'Madhya Pradesh': { region: 'central', capital: 'Bhopal', emoji: '🐅' },
+            'Maharashtra': { region: 'west', capital: 'Mumbai', emoji: '🏙️' },
+            'Manipur': { region: 'northeast', capital: 'Imphal', emoji: '💃' },
+            'Meghalaya': { region: 'northeast', capital: 'Shillong', emoji: '☔' },
+            'Mizoram': { region: 'northeast', capital: 'Aizawl', emoji: '🎋' },
+            'Nagaland': { region: 'northeast', capital: 'Kohima', emoji: '🏹' },
+            'Odisha': { region: 'east', capital: 'Bhubaneswar', emoji: '🏛️' },
+            'Punjab': { region: 'north', capital: 'Chandigarh', emoji: '🌾' },
+            'Rajasthan': { region: 'west', capital: 'Jaipur', emoji: '🏰' },
+            'Sikkim': { region: 'northeast', capital: 'Gangtok', emoji: '🏔️' },
+            'Tamil Nadu': { region: 'south', capital: 'Chennai', emoji: '🏛️' },
+            'Telangana': { region: 'south', capital: 'Hyderabad', emoji: '💎' },
+            'Tripura': { region: 'northeast', capital: 'Agartala', emoji: '🎭' },
+            'Uttar Pradesh': { region: 'north', capital: 'Lucknow', emoji: '🕌' },
+            'Uttarakhand': { region: 'north', capital: 'Dehradun', emoji: '🏔️' },
+            'West Bengal': { region: 'east', capital: 'Kolkata', emoji: '🎨' }
+        };
+
+        // Enhanced Content Categories
+        const contentCategories = [
+            { id: 'formation', name: 'Formation History', emoji: '🏛️' },
+            { id: 'leadership', name: 'Leadership Saga', emoji: '👑' }
+        ];
+
+        // App State
+        let appState = {
+            currentState: null,
+            isARMode: false,
+            bookmarkedStates: JSON.parse(localStorage.getItem('bookmarkedStates') || '[]'),
+            requestCount: 0,
+            cache: new Map()
+        };
+
+        // Initialize Application
+        function initializeApp() {
+            setTimeout(() => {
+                document.getElementById('splashScreen').style.display = 'none';
+                document.getElementById('mainInterface').style.display = 'block';
+                initializeStatesGrid();
+                setupEventListeners();
+            }, 1000);
+        }
+
+        // Initialize States Grid
+        function initializeStatesGrid() {
+            const grid = document.getElementById('statesGrid');
+            grid.innerHTML = '';
+            
+            Object.entries(statesData).forEach(([stateName, stateInfo]) => {
+                const stateCard = createStateCard(stateName, stateInfo);
+                grid.appendChild(stateCard);
+            });
+        }
+
+        // Create Enhanced State Card
+        function createStateCard(stateName, stateInfo) {
+            const card = document.createElement('div');
+            card.className = 'state-card fade-in';
+            card.dataset.state = stateName;
+            card.dataset.region = stateInfo.region;
+            
+            card.innerHTML = `
+                <div class="state-name">${stateInfo.emoji} ${stateName}</div>
+                <div class="state-info">
+                    Capital: ${stateInfo.capital}<br>
+                    Region: ${stateInfo.region.charAt(0).toUpperCase() + stateInfo.region.slice(1)}
+                </div>
+            `;
+            
+            card.onclick = () => exploreState(stateName);
+            return card;
+        }
+
+        // Enhanced State Exploration
+        async function exploreState(stateName) {
+            appState.currentState = stateName;
+            const stateInfo = statesData[stateName];
+            
+            // Update UI
+            document.getElementById('stateEmoji').textContent = stateInfo.emoji;
+            document.getElementById('stateTitle').textContent = stateName;
+            document.getElementById('infoPanel').classList.add('show');
+            
+            // Show loading state
+            showLoadingState();
+            
+            try {
+                const content = await fetchEnhancedStateInfo(stateName);
+                displayEnhancedContent(content);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        // Enhanced API Integration
+        async function fetchEnhancedStateInfo(stateName) {
+            // Check cache first
+            const cacheKey = `${stateName}-${Date.now()}`;
+            if (appState.cache.has(stateName)) {
+                const cached = appState.cache.get(stateName);
+                if (Date.now() - cached.timestamp < CONFIG.app.cacheTimeout) {
+                    return cached.data;
+                }
+            }
+
+            // Rate limiting
+            if (appState.requestCount >= CONFIG.app.maxRequestsPerMinute) {
+                throw new Error('Rate limit exceeded. Please wait a moment.');
+            }
+
+            const randomCategory = contentCategories[Math.floor(Math.random() * contentCategories.length)];
+            const prompt = generateEnhancedPrompt(stateName, randomCategory);
+            
+            const response = await fetch(CONFIG.groq.apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${CONFIG.groq.apiKey}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: CONFIG.groq.model,
+                    messages: [
+                        {
+    role: 'system',
+    content: `You are Dr. Bharata, an expert historian specializing in the formation and political evolution of Indian states. Focus on providing detailed, accurate information about:
+    1. State Formation: Historical context, key events, political movements, and the process of state creation
+    2. Leadership History: From historical rulers to modern political leaders, their contributions, achievements, and impact
+    Use a storytelling approach, include specific dates, names, and significant events. Maintain historical accuracy while making the content engaging.`
+},
+                        {
+                            role: 'user',
+                            content: prompt
+                        }
+                    ],
+                    max_tokens: 400,
+                    temperature: 0.8
+                })
+            });
+
+            if (!response.ok) {
+               throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+           }
+
+           const data = await response.json();
+           const content = {
+               category: randomCategory,
+               content: data.choices[0].message.content,
+               state: stateName,
+               timestamp: Date.now()
+           };
+
+           // Cache the result
+           appState.cache.set(stateName, { data: content, timestamp: Date.now() });
+           appState.requestCount++;
+           
+           // Reset rate limit counter after 1 minute
+           setTimeout(() => appState.requestCount = Math.max(0, appState.requestCount - 1), 60000);
+           
+           return content;
+       }
+
+     function generateEnhancedPrompt(stateName, category) {
+    const stateInfo = statesData[stateName];
+    const prompts = {
+        formation: `Tell me the detailed formation story of ${stateName}, India. Include:
+            - Historical context and circumstances leading to its formation
+            - Key dates and events in the formation process
+            - Political movements and demands that led to statehood
+            - Notable figures who championed the state's formation
+            - Significant challenges faced during the formation
+            - Important legislation or acts related to its creation
+            - Initial administrative setup and first government
+            Make it engaging with specific details and anecdotes. (250-300 words)`,
+        
+        leadership: `Share a comprehensive leadership history of ${stateName}, India. Include:
+            - Early rulers and dynasties that shaped the region
+            - Key freedom fighters from the state
+            - First Chief Minister and their contributions
+            - Notable political leaders who transformed the state
+            - Important administrative reforms by different leaders
+            - Significant achievements and milestones under various leaderships
+            - Current political landscape and leadership
+            Include specific names, dates, and impactful decisions. (250-300 words)`
+    };
+    
+    return prompts[category.id];
+}
+    async function fetchStateImages(stateName) {
+    try {
+        const response = await fetch(
+            `${CONFIG.unsplash.apiUrl}/search/photos?query=${encodeURIComponent(stateName + ' India history politics leadership monument')}&per_page=3`,
+            {
+                headers: {
+                    'Authorization': `Client-ID ${CONFIG.unsplash.apiKey}`
+                }
+            }
+        );
+        
+        if (!response.ok) throw new Error('Failed to fetch images');
+        
+        const data = await response.json();
+        return data.results;
+    } catch (error) {
+        console.error('Error fetching images:', error);
+        return [];
+    }
+}
+       // Display Enhanced Content
+      async function displayEnhancedContent(contentData) {
+    const infoContent = document.getElementById('infoContent');
+    const stateInfo = statesData[contentData.state];
+    
+    // Show loading state
+    showLoadingState();
+    
+    // Fetch images
+    const images = await fetchStateImages(contentData.state);
+    
+    // Create image gallery HTML
+    const imageGalleryHTML = images.length ? `
+        <div class="image-gallery">
+            ${images.map(image => `
+                <div class="gallery-item">
+                    <img src="${image.urls.regular}" 
+                         alt="${image.alt_description || `${contentData.state} - Cultural Image`}"
+                         loading="lazy"
+                         onerror="this.parentElement.classList.add('image-skeleton')">
+                    <div class="image-credit">
+                        Photo by <a href="${image.user.links.html}" target="_blank" rel="noopener">${image.user.name}</a> 
+                        on <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    ` : '';
+
+   infoContent.innerHTML = `
+        ${imageGalleryHTML}
+        <div class="category-tag">
+            ${contentData.category.emoji} ${contentData.category.name}
+        </div>
+        
+        <div class="content-section">
+            <div class="section-title">
+                ${contentData.category.id === 'formation' ? '🏛️ Formation Story' : '👑 Leadership History'}
+            </div>
+            <div class="section-content">
+                ${formatContent(contentData.content)}
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <div class="section-title">
+                📍 Key Information
+            </div>
+            <div class="section-content">
+                <strong>State:</strong> ${contentData.state}<br>
+                <strong>Capital:</strong> ${statesData[contentData.state].capital}<br>
+                <strong>Formation Category:</strong> ${contentData.category.name}<br>
+                <strong>Region:</strong> ${statesData[contentData.state].region.charAt(0).toUpperCase() + statesData[contentData.state].region.slice(1)}<br>
+                <strong>Last Updated:</strong> ${new Date().toLocaleString()}
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 12px; text-align: center;">
+                <strong>💡 Did you know?</strong><br>
+                <span style="font-size: 12px; opacity: 0.9;">
+                    Click "More Info" to explore ${contentData.category.id === 'formation' ? 'leadership history' : 'formation story'} of ${contentData.state}!
+                </span>
+            </div>
+        </div>
+    `;
+}
+
+// Add error handling for images
+function handleImageError(img) {
+    img.parentElement.classList.add('image-skeleton');
+}
+       // Format Content for Better Display
+       function formatContent(content) {
+           return content
+               .split('\n')
+               .map(paragraph => paragraph.trim())
+               .filter(paragraph => paragraph.length > 0)
+               .map(paragraph => `<p>${paragraph}</p>`)
+               .join('');
+       }
+
+       // Show Loading State
+       function showLoadingState() {
+           const infoContent = document.getElementById('infoContent');
+           const loadingMessages = [
+               "Consulting ancient scrolls...",
+               "Gathering historical insights...",
+               "Exploring leadership stories...",
+               "Discovering cultural treasures...",
+               "Analyzing formation history...",
+               "Uncovering fascinating facts..."
+           ];
+           
+           const randomMessage = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+           
+           infoContent.innerHTML = `
+               <div class="loading-state">
+                   <div class="loading-spinner"></div>
+                   <div class="loading-text">${randomMessage}</div>
+                   <div class="loading-tips">AI is generating unique insights about ${appState.currentState}</div>
+               </div>
+           `;
+       }
+
+       // Display Error
+    function showError(error) {
+    const infoContent = document.getElementById('infoContent');
+    infoContent.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px;">
+            <div style="font-size: 48px; margin-bottom: 20px;">😔</div>
+            <h3 style="color: #ff6b6b;">Oops! Something went wrong</h3>
+            <p style="margin: 15px 0; color: #666;">
+                ${error.message || 'Unable to fetch information. Please try again.'}
+            </p>
+            <button class="control-btn" onclick="retryLastOperation()" style="margin-top: 15px;">
+                🔄 Try Again
+            </button>
+        </div>
+    `;
+}
+function retryLastOperation() {
+    if (appState.currentState) {
+        exploreState(appState.currentState);
+    }
+}
+       // Enhanced Search and Filter Functions
+       function filterStates(searchTerm) {
+           const cards = document.querySelectorAll('.state-card');
+           const term = searchTerm.toLowerCase();
+           
+           cards.forEach(card => {
+               const stateName = card.dataset.state.toLowerCase();
+               const stateInfo = statesData[card.dataset.state];
+               const capital = stateInfo.capital.toLowerCase();
+               const region = stateInfo.region.toLowerCase();
+               
+               const matches = stateName.includes(term) || 
+                             capital.includes(term) || 
+                             region.includes(term);
+               
+               card.style.display = matches ? 'block' : 'none';
+               
+               if (matches && term.length > 0) {
+                   card.style.animation = 'fadeIn 0.3s ease-in-out';
+               }
+           });
+       }
+
+       function filterByRegion(region) {
+           // Update active tab
+           document.querySelectorAll('.filter-tab').forEach(tab => {
+               tab.classList.remove('active');
+           });
+           event.target.classList.add('active');
+           
+           const cards = document.querySelectorAll('.state-card');
+           
+           cards.forEach(card => {
+               if (region === 'all' || card.dataset.region === region) {
+                   card.style.display = 'block';
+                   card.style.animation = 'fadeIn 0.3s ease-in-out';
+               } else {
+                   card.style.display = 'none';
+               }
+           });
+       }
+
+       // Action Button Functions
+       function shareState() {
+           if (navigator.share && appState.currentState) {
+               navigator.share({
+                   title: `${appState.currentState} - Bharat States Explorer`,
+                   text: `Discover the fascinating history and culture of ${appState.currentState}!`,
+                   url: window.location.href
+               });
+           } else {
+               // Fallback for browsers without Web Share API
+               const text = `Check out ${appState.currentState} on Bharat States Explorer!`;
+               navigator.clipboard.writeText(text).then(() => {
+                   showNotification('📋 Copied to clipboard!');
+               });
+           }
+       }
+
+       function bookmarkState() {
+           if (!appState.currentState) return;
+           
+           const bookmarks = JSON.parse(localStorage.getItem('bookmarkedStates') || '[]');
+           
+           if (!bookmarks.includes(appState.currentState)) {
+               bookmarks.push(appState.currentState);
+               localStorage.setItem('bookmarkedStates', JSON.stringify(bookmarks));
+               showNotification('🔖 State bookmarked!');
+           } else {
+               const index = bookmarks.indexOf(appState.currentState);
+               bookmarks.splice(index, 1);
+               localStorage.setItem('bookmarkedStates', JSON.stringify(bookmarks));
+               showNotification('❌ Bookmark removed!');
+           }
+           
+           appState.bookmarkedStates = bookmarks;
+       }
+
+       function exploreMore() {
+           if (appState.currentState) {
+               exploreState(appState.currentState);
+           }
+       }
+
+       function viewInAR() {
+           if (appState.currentState) {
+               toggleAR();
+               showNotification('🥽 AR mode activated!');
+           }
+       }
+
+       // AR Functions
+       function toggleAR() {
+           const arScene = document.getElementById('arScene');
+           const floatingInfo = document.getElementById('floatingInfo');
+           
+           if (!appState.isARMode) {
+               arScene.classList.remove('hidden');
+               floatingInfo.style.display = 'block';
+               appState.isARMode = true;
+               
+               // Initialize AR scene
+               initializeAR();
+           } else {
+               exitAR();
+           }
+       }
+
+       function initializeAR() {
+           // Enhanced AR initialization
+           const scene = document.querySelector('a-scene');
+           
+           scene.addEventListener('loaded', () => {
+               console.log('AR scene loaded successfully');
+               
+               // Add dynamic content to AR markers
+               if (appState.currentState) {
+                   updateARContent(appState.currentState);
+               }
+           });
+       }
+
+       function updateARContent(stateName) {
+           const marker = document.querySelector('a-marker');
+           const stateInfo = statesData[stateName];
+           
+           // Update AR text
+           const textElement = marker.querySelector('a-text');
+           if (textElement) {
+               textElement.setAttribute('value', `${stateInfo.emoji} ${stateName}\nTap to explore!`);
+           }
+           
+           // Add interactive elements
+           marker.addEventListener('click', () => {
+               exploreState(stateName);
+           });
+       }
+
+       function exitAR() {
+           document.getElementById('arScene').classList.add('hidden');
+           document.getElementById('floatingInfo').style.display = 'none';
+           appState.isARMode = false;
+       }
+
+       // Utility Functions
+       function closeInfoPanel() {
+           document.getElementById('infoPanel').classList.remove('show');
+       }
+
+       function showSettings() {
+           // Placeholder for settings functionality
+           showNotification('⚙️ Settings coming soon!');
+       }
+
+       function showNotification(message) {
+           // Create notification element
+           const notification = document.createElement('div');
+           notification.style.cssText = `
+               position: fixed;
+               top: 100px;
+               right: 20px;
+               background: rgba(0, 0, 0, 0.8);
+               color: white;
+               padding: 12px 20px;
+               border-radius: 25px;
+               font-size: 14px;
+               z-index: 2000;
+               animation: slideIn 0.3s ease-out;
+           `;
+           notification.textContent = message;
+           
+           document.body.appendChild(notification);
+           
+           setTimeout(() => {
+               notification.style.animation = 'slideOut 0.3s ease-in';
+               setTimeout(() => notification.remove(), 300);
+           }, 3000);
+       }
+
+       // Event Listeners
+       function setupEventListeners() {
+           // Keyboard shortcuts
+           document.addEventListener('keydown', (e) => {
+               switch(e.key) {
+                   case 'Escape':
+                       closeInfoPanel();
+                       break;
+                   case 'r':
+                   case 'R':
+                       if (e.ctrlKey || e.metaKey) {
+                           e.preventDefault();
+                           if (appState.currentState) {
+                               exploreMore();
+                           }
+                       }
+                       break;
+               }
+           });
+
+           // Touch gestures for mobile
+           let touchStartY = 0;
+           const infoPanel = document.getElementById('infoPanel');
+           
+           infoPanel.addEventListener('touchstart', (e) => {
+               touchStartY = e.touches[0].clientY;
+           });
+           
+           infoPanel.addEventListener('touchmove', (e) => {
+               const touchY = e.touches[0].clientY;
+               const diff = touchStartY - touchY;
+               
+               if (diff < -100) { // Swipe down to close
+                   closeInfoPanel();
+               }
+           });
+
+           // Window resize handler
+           window.addEventListener('resize', () => {
+               // Adjust layout for orientation changes
+               setTimeout(() => {
+                   const vh = window.innerHeight * 0.01;
+                   document.documentElement.style.setProperty('--vh', `${vh}px`);
+               }, 100);
+           });
+
+           // Visibility change handler
+           document.addEventListener('visibilitychange', () => {
+               if (document.hidden && appState.isARMode) {
+                   exitAR();
+               }
+           });
+       }
+
+       // Add CSS animations
+       const style = document.createElement('style');
+       style.textContent = `
+           @keyframes slideIn {
+               from { transform: translateX(100%); opacity: 0; }
+               to { transform: translateX(0); opacity: 1; }
+           }
+           
+           @keyframes slideOut {
+               from { transform: translateX(0); opacity: 1; }
+               to { transform: translateX(100%); opacity: 0; }
+           }
+       `;
+       document.head.appendChild(style);
+
+       // Initialize app when DOM is loaded
+       document.addEventListener('DOMContentLoaded', () => {
+           // Set initial viewport height
+           const vh = window.innerHeight * 0.01;
+           document.documentElement.style.setProperty('--vh', `${vh}px`);
+           
+           // Preload some data
+           console.log('Bharat States Explorer v2.0.0 initialized');
+           console.log(`Loaded ${Object.keys(statesData).length} states`);
+       });
+
+       // Service Worker Registration (for PWA capabilities)
+       if ('serviceWorker' in navigator) {
+           window.addEventListener('load', () => {
+               navigator.serviceWorker.register('/sw.js')
+                   .then(registration => console.log('SW registered'))
+                   .catch(error => console.log('SW registration failed'));
+           });
+       }
+   </script>
+</body>
+</html>
