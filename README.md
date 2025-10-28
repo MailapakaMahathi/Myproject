@@ -71,6 +71,10 @@ mini_project2/
 <img width="1398" height="597" alt="image" src="https://github.com/user-attachments/assets/8883a8cf-8df3-49cf-a374-36d452165154" />
 <img width="647" height="406" alt="image" src="https://github.com/user-attachments/assets/1df7151b-eef6-4a4c-9776-ca6725e60b6b" />
 <img width="666" height="406" alt="image" src="https://github.com/user-attachments/assets/4f1f602c-13b1-41b4-b4b5-c0a0ec8737e3" />
+<img width="672" height="408" alt="image" src="https://github.com/user-attachments/assets/cd8c596e-adf1-47aa-9178-43a0c93474cf" />
+<img width="683" height="408" alt="image" src="https://github.com/user-attachments/assets/b395688a-e170-42fe-bd69-77492f16767b" />
+
+
 
 
 
