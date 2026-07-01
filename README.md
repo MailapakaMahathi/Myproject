@@ -115,7 +115,7 @@ Firebase project setup for authentication
 
 1️⃣ Clone the Repository
 
-git clone https://github.com/YedlaLikitha02/mini_project.git
+git clone https://github.com/MailapakaMahathi/Myproject.git
 
 cd mini_project
 
