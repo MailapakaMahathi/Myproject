@@ -2,6 +2,7 @@
 
 📘 Project Overview
 
+
 This is an interactive web platform that visualizes the formation and leadership history of Indian states. It provides detailed insights into how each state was formed, who led it, and how leadership evolved — all through interactive maps, AI tools, and engaging visualizations.
 
 🚀 Features at a Glance
