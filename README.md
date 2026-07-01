@@ -1,65 +1,112 @@
-📘 Project Title: Bharat States Formation and Leadership Saga
-📝 Overview
+🇮🇳 Formation and Leadership Saga of Bharat’s States
+📘 Project Overview
+This is an interactive web platform that visualizes the formation and leadership history of Indian states. It provides detailed insights into how each state was formed, who led it, and how leadership evolved — all through interactive maps, AI tools, and engaging visualizations.
 
-This project is a web-based interactive platform that explores the formation and leadership journey of India's states. It combines historical, cultural, and visual data representations to educate users about Indian state development through engaging interfaces.
+🚀 Features at a Glance
+🗺️ Interactive Map (React + Leaflet.js) – Color-coded map showing political party rule in each state, with clickable Chief Minister lists.
+🔊 Voice Search Map (HTML Page) – Speak a state’s name to highlight it, view and listen to its details.
+🧠 AI-Powered Quiz & Games (Flask + Groq API) – Randomized questions and score tracking through MongoDB.
+🧍‍♂️ 3D Leader Models (Three.js) – Interactive 3D representations of Indian leaders.
+💬 Chatbot – AI-powered assistant to answer queries related to states and leaders.
+🕰️ Timeline Map – Visual representation of the formation timeline of Indian states.
+🧩 System Modules
+1️⃣ Main Page (Chrome Go Live Launch)
+Launch index.html using Go Live in VS Code (or any live server).
+This acts as the main entry point that links to all modules and features.
+2️⃣ React Map (Leaflet.js Integration)
+Start the React app using:
 
-The project is built using HTML, CSS, JavaScript, and Firebase for backend functionalities. It includes features like user authentication, visual maps, and information on achievements, leaders, and state evolution.
+npm start
+Displays a color-coded political map of India.
+Shows party rule per year using selectable year options.
+Clicking a state opens the list of Chief Ministers year-wise.
+Each Chief Minister’s name is clickable to view detailed leader info.
+3️⃣ indiamap (HTML Page)
+Open this HTML page. Features include:
 
-🚀 Features
+Voice Search using the Web Speech API — highlight states by speaking their names.
+Displays capital, Chief Minister, official language, and formation date.
+Allows users to upload a leader’s image — classifies it and displays that state’s info.
+Reads out the information for better accessibility.
+4️⃣ Quiz & Games Module (Flask App)
+Run the backend using:
 
-🔐 User Authentication (Login & Registration using Firebase)
+python app.py
+Randomly generates quiz questions using the Groq API.
 
-🗺️ Interactive Indian Map displaying state data
+Saves user scores and progress to MongoDB.
 
-🏛️ Historical and Leadership Information
+Includes interactive learning games:
 
-📊 Visual Representations of data (charts/maps)
+Drag-and-drop India map puzzle
+Match Chief Minister to state
+Sort states by their formation timeline
+5️⃣ 3D Leader Gallery
+Built using Three.js for immersive visuals.
+Displays 3D models of prominent Indian leaders.
+6️⃣ Chatbot & Timeline Map
+Chatbot: Responds to user queries related to the project using Groq API.
+Timeline Map: Shows the timeline of state formations — how and when each Indian state was established.
+🧰 Tech Stack
+Layer	Technologies
+Frontend	HTML, CSS, JavaScript, React.js, Leaflet.js, Three.js
+Backend	Flask
+Databases	Firebase (Auth & State Data), MongoDB (Quiz & Game Data)
+APIs	Groq API (Chatbot & Quiz)
+Authentication	Firebase Authentication
+Speech & Media	Web Speech API, Image Classification API
+⚙️ Installation & Setup
+🔧 Prerequisites
+Node.js & npm
+Python 3.x
+MongoDB (local or cloud)
+Firebase project setup for authentication
+🪜 Steps to Run
+1️⃣ Clone the Repository
+git clone https://github.com/YedlaLikitha02/mini_project.git
+cd mini_project
+2️⃣ Launch Main Page
+Open index.html and click Go Live. This opens the main project homepage to navigate modules.
 
-🎤 Voice Search Integration
+3️⃣ Start the React App (Leaflet Map)
+cd react-app
+npm install
+npm start
+Visit: 👉 http://localhost:3000
 
-📱 Responsive and Interactive UI
+4️⃣ Start Flask Backend for Quiz & Games
+cd backend
+pip install -r requirements.txt
+python app.py
+Visit: 👉 http://127.0.0.1:5000
 
-🧩 Tech Stack
-Layer	Technology Used
-Frontend   - HTML, CSS, JavaScript
-Backend    - Node.js, Firebase
-Database   - Firebase Realtime Database
-Additional - Voice Recognition API, Visual Charts
+5️⃣ Run Additional Modules
+Open indiamap.html → Voice Search Map & Image Classification.
+Launch 3D Gallery, Timeline Map, and Chatbot via project navigation.
+🧾 Outputs / Results
+Module	Description
+Interactive Map	Party rule timeline, clickable Chief Minister details
+Voice Search Map	Voice-based highlighting, image upload & text reading
+Quiz & Game	Randomized AI quiz and score tracking
+3D Models	Interactive visual models of Indian leaders
+Chatbot	Smart project-related query assistant
+Timeline Map	Shows chronological formation of Indian states
+🏁 Conclusion
+This project provides a centralized and engaging platform to learn about India’s political and administrative evolution. Through the integration of AI tools, voice interfaces, and interactive maps, it transforms static historical data into a dynamic and immersive learning experience.
 
-#PROJECT STRUCTURE
-mini_project2/
-│
-├── 1.html
-├── achieve.css
-├── achieve.html
-├── achieve.js
-├── firebase-config.js
-├── index.css
-├── index.html
-├── india2.jpg
-├── indiamap.html
-├── IndianFlag.jpg
-├── landing.html
-├── login.js
-├── Mainpage.html
-├── package-lock.json
-├── package.json
-├── register.html
-├── register.js
-├── requirements.txt
-├── script.js
-├── script1.js
-├── server.js
-├── visual.css
-├── visual.html
-├── visualscript.js
-├── voicesearch.js
-│
-└── client/
-    ├── .gitignore
-    ├── package-lock.json
-    ├── package.json
-    └── README.md
+👥 Contributors
+Batch 8 (B8)
+
+Uppunuthula Shiva Prasad – 075
+Mailapaka Sai Sree Mahathi – 086
+Sahithi Reddy Lingam – 090
+Yedla Likitha – 121
+Guide: K. Chandra Sekhar, Assistant Professor, IT Dept., MVSR Engineering College
+
+📚 References
+R. Kumar et al., Designing Voice-Based State Information Systems Using Speech Recognition, 2022.
+P. Sharma & D. Joshi, Real-time Political Data Visualization Using LeafletJS, 2021.
+R. T. & A. B., 3D Model Integration in Educational Platforms, 2020.
 
     #SCREENSHOTS
 
