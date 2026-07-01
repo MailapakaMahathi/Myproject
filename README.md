@@ -1,19 +1,33 @@
 🇮🇳 Formation and Leadership Saga of Bharat’s States
+
 📘 Project Overview
+
 This is an interactive web platform that visualizes the formation and leadership history of Indian states. It provides detailed insights into how each state was formed, who led it, and how leadership evolved — all through interactive maps, AI tools, and engaging visualizations.
 
 🚀 Features at a Glance
+
 🗺️ Interactive Map (React + Leaflet.js) – Color-coded map showing political party rule in each state, with clickable Chief Minister lists.
+
 🔊 Voice Search Map (HTML Page) – Speak a state’s name to highlight it, view and listen to its details.
+
 🧠 AI-Powered Quiz & Games (Flask + Groq API) – Randomized questions and score tracking through MongoDB.
+
 🧍‍♂️ 3D Leader Models (Three.js) – Interactive 3D representations of Indian leaders.
+
 💬 Chatbot – AI-powered assistant to answer queries related to states and leaders.
+
 🕰️ Timeline Map – Visual representation of the formation timeline of Indian states.
+
 🧩 System Modules
+
 1️⃣ Main Page (Chrome Go Live Launch)
+
 Launch index.html using Go Live in VS Code (or any live server).
+
 This acts as the main entry point that links to all modules and features.
+
 2️⃣ React Map (Leaflet.js Integration)
+
 Start the React app using:
 
 npm start
